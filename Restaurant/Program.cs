@@ -10,12 +10,14 @@ namespace Restaurant
     {
         static Zamówienie zamówienie;
         static Menu menu;
-        public List<PozycjaZamówienia> pozycjeZamówienia = new List<PozycjaZamówienia>();
+        public List<PozycjaDanie> pozycjeDań = new List<PozycjaDanie>();
         static List<Danie> menuD = new List<Danie> {
            new Danie { Nazwa="Żurek", Cena=4 },
            new Danie { Nazwa="Zestaw obiadowy - Schabowy", Cena=14 },
            new Danie { Nazwa="Placki", Cena=10 }
         };
+        // Lista klientów
+        static List<Klient> klienci = new List<Klient>();
 
 
         static void Main(string[] args)
@@ -45,7 +47,7 @@ namespace Restaurant
                         NowyKlient();
                         break;
                     case 2:
-                       // DodajPozycję();
+                       DodajDanieDoKlienta();
                         break;
                     case 3:
                         // EdycjaZamówienia();
@@ -58,7 +60,7 @@ namespace Restaurant
         }
 
 
-        private static void WyświetlZamówienie()
+        private static void WyświetlZamówienie() //TODO
         {
             Console.WriteLine("Czy potwierdzenie elektorniczne?");
             if (zamówienie.potwierdzenieElektroniczne)
@@ -75,17 +77,12 @@ namespace Restaurant
 
         private static void NowyKlient()
         {
-            Klient nowe = new Klient();
+            Klient klient = new Klient();
+            
 
             Console.WriteLine("==================================================");
             Console.WriteLine("Dodawanie nowego klienta");
             Console.WriteLine("==================================================");
-
-            Console.WriteLine("Data Zamówienia:");
-            while (!DateTime.TryParse(Console.ReadLine(), out nowe.dataRealizacji))
-            {
-                Console.WriteLine("Nieprawidłowy format daty");
-            }
 
             Console.WriteLine("Rezerwacja?");
             Console.WriteLine("1. Tak");
@@ -95,7 +92,7 @@ namespace Restaurant
             {
                 option2 = KeyToInt(Console.ReadKey());
             }
-            nowe.rezerwacja = option2 == 1;
+            klient.rezerwacja = option2 == 1;
 
             Console.WriteLine("Wydać numerek do szatni?");
             Console.WriteLine("1. Tak");
@@ -105,26 +102,69 @@ namespace Restaurant
             {
                 option3 = KeyToInt(Console.ReadKey());
             }
-            nowe.numerek = option3 == 1;
+            klient.numerek = option3 == 1;
 
             Console.WriteLine("Pokaż menu");
             int counter = 0;
             int displayCounter = 1;
             for (int i = 0; counter + i < menuD.Count; ++i)
             {
-                displayCounter += i;
-                Console.WriteLine("Pozycja numer " + displayCounter);
-                Console.WriteLine("Nazwa pozycji " + menuD[i].Nazwa);
-                Console.WriteLine("Cena pozycji " + menuD[i].Cena);
+                if (menuD[i].Cena > 0)
+                {
+                    displayCounter += i;
+                    Console.WriteLine("Pozycja numer " + displayCounter);
+                    Console.WriteLine("Nazwa pozycji " + menuD[i].Nazwa);
+                    Console.WriteLine("Cena pozycji " + menuD[i].Cena);
+                }
+               
             }
             Console.WriteLine("==================================================");
-            Console.WriteLine("Podaj numer pozycji z zamówienia do edycji");
+            Console.WriteLine("Podaj numer dania do zamówienia klienta");
             Console.WriteLine("==================================================");
-            int pozycjaDoEdycji;
-            while (!int.TryParse(Console.ReadLine(), out pozycjaDoEdycji))
+            int pozycjaDoZamowienia;
+            while (!int.TryParse(Console.ReadLine(), out pozycjaDoZamowienia))
             {
                 Console.WriteLine("Nieprawidłowy format liczby");
             }
+            pozycjaDoZamowienia --;
+            klient.zamówienie.DodajDanieDoZamówienia(menuD[pozycjaDoZamowienia]);
+            int check = 0;
+            Console.WriteLine("Dodać kolejne danie do zamówienia?");
+            Console.WriteLine("1. Tak");
+            Console.WriteLine("2. Nie");
+            int option4 = 0;
+            while (option4 != 1 && option4 != 2)
+            {
+                if ( check == 1)
+                {
+                    Console.WriteLine("Dodać kolejne danie do zamówienia?");
+                    Console.WriteLine("1. Tak");
+                    Console.WriteLine("2. Nie");
+                }
+                check = 1;
+                option4 = KeyToInt(Console.ReadKey());
+                if ( option4 == 1 )
+                {
+                    option4 = 0;
+                    Console.WriteLine("==================================================");
+                    Console.WriteLine("Podaj numer dania do zamówienia klienta");
+                    Console.WriteLine("==================================================");
+                    int pozycjaDoZamowienia2;
+                    while (!int.TryParse(Console.ReadLine(), out pozycjaDoZamowienia2))
+                    {
+                        Console.WriteLine("Nieprawidłowy format liczby");
+                    }
+                    klient.zamówienie.DodajDanieDoZamówienia(menuD[pozycjaDoZamowienia2]);
+                }
+                else if ( option4 == 2 )
+                {
+                    option4 = 0;
+                    break;
+                }
+                
+                
+            }
+
 
             ///  Console.WriteLine("Płatność kartą?");
             ///  Console.WriteLine("1. Tak");
@@ -138,7 +178,143 @@ namespace Restaurant
             ///            nowe.potwierdzenieElektroniczne = option == 1;
 
             // zamówienie = nowe;
-            Console.WriteLine(nowe);
+            klienci.Add(klient);
+            Console.WriteLine(klient);
+        }
+        private static void DodajDanieDoKlienta()
+        {
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Wyswietl listę klientów");
+            Console.WriteLine("==================================================");
+            int counter = 0;
+            int numeryKlientow = 1;
+            for ( int i = 0; counter+i<klienci.Count; i++)
+            {
+                numeryKlientow += i;
+                Console.WriteLine("Numer klienta: " + numeryKlientow);
+                Console.WriteLine("Numerek z szatni: " + klienci[i].numerek);
+                Console.WriteLine("Dania: ");
+                for (int d = 0; counter + d < klienci[i].zamówienie.dania.Count; d++)
+                {
+                    if (klienci[i].zamówienie.dania[d].Cena > 0)
+                    {
+                        Console.WriteLine("Danie numer: " + d + " " + klienci[i].zamówienie.dania[d].Nazwa);
+                        Console.WriteLine("Danie numer: " + d + " " + klienci[i].zamówienie.dania[d].Cena);
+                    }
+                }
+                   
+                Console.WriteLine("Rezerwacja: " + klienci[i].rezerwacja);
+            }
+
+            // Edycja zamówienia klienta
+
+            // Numer klienta
+            Console.WriteLine("======================================================");
+            Console.WriteLine("Podaj numer klienta w którym chesz edytować zamówienia?");
+            Console.WriteLine("======================================================");
+            int numerKlientaWKtórymDokuonujeEdycjiZamownienia;
+            while (!int.TryParse(Console.ReadLine(), out numerKlientaWKtórymDokuonujeEdycjiZamownienia))
+            {
+                Console.WriteLine("Nieprawidłowy format liczby");
+            }
+            //numerKlientaWKtórymDokuonujeEdycjiZamownienia -= 1;
+            
+            // Numer dania
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Podaj numer dania");
+            Console.WriteLine("==================================================");
+            int danieDoEdycji;
+            while (!int.TryParse(Console.ReadLine(), out danieDoEdycji))
+            {
+                Console.WriteLine("Nieprawidłowy format liczby");
+            }
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Usunąć danie numer: "+danieDoEdycji+"?");
+            Console.WriteLine("==================================================");
+            Console.WriteLine("1. Tak");
+            Console.WriteLine("2. Nie");
+            int option = 0;
+            while (option != 1 && option != 2)
+            {
+                option = KeyToInt(Console.ReadKey());
+
+                if ( option == 1 )
+                {
+                    //    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.UsunDanieZZamówienia(klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie,danieDoEdycji);
+                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.dania[danieDoEdycji].Nazwa = null;
+                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.dania[danieDoEdycji].Cena = 0;
+                }
+            }
+
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Dodać nowe danie do klienta?");
+            Console.WriteLine("==================================================");
+            Console.WriteLine("1. Tak");
+            Console.WriteLine("2. Nie");
+            int option2 = 0;
+            while (option2 != 1 && option2 != 2)
+            {
+                option2 = KeyToInt(Console.ReadKey());
+                if ( option2 == 1 )
+                {
+                    Console.WriteLine("Pokaż menu");
+                    int counter2 = 0;
+                    int displayCounter = 1;
+                    for (int i = 0; counter2 + i < menuD.Count; ++i)
+                    {
+                        displayCounter += i;
+                        Console.WriteLine("Pozycja numer " + displayCounter);
+                        Console.WriteLine("Nazwa pozycji " + menuD[i].Nazwa);
+                        Console.WriteLine("Cena pozycji " + menuD[i].Cena);
+                    }
+                    Console.WriteLine("==================================================");
+                    Console.WriteLine("Podaj numer dania do zamówienia klienta");
+                    Console.WriteLine("==================================================");
+                    int pozycjaDoZamowienia;
+                    while (!int.TryParse(Console.ReadLine(), out pozycjaDoZamowienia))
+                    {
+                        Console.WriteLine("Nieprawidłowy format liczby");
+                    }
+                    pozycjaDoZamowienia--;
+                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.DodajDanieDoZamówienia(menuD[pozycjaDoZamowienia]);
+                    int check = 0;
+                    Console.WriteLine("Dodać kolejne danie do zamówienia?");
+                    Console.WriteLine("1. Tak");
+                    Console.WriteLine("2. Nie");
+                    int option4 = 0;
+                    while (option4 != 1 && option4 != 2)
+                    {
+                        if (check == 1)
+                        {
+                            Console.WriteLine("Dodać kolejne danie do zamówienia?");
+                            Console.WriteLine("1. Tak");
+                            Console.WriteLine("2. Nie");
+                        }
+                        check = 1;
+                        option4 = KeyToInt(Console.ReadKey());
+                        if (option4 == 1)
+                        {
+                            option4 = 0;
+                            Console.WriteLine("==================================================");
+                            Console.WriteLine("Podaj numer dania do zamówienia klienta");
+                            Console.WriteLine("==================================================");
+                            int pozycjaDoZamowienia2;
+                            while (!int.TryParse(Console.ReadLine(), out pozycjaDoZamowienia2))
+                            {
+                                Console.WriteLine("Nieprawidłowy format liczby");
+                            }
+                            klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.DodajDanieDoZamówienia(menuD[pozycjaDoZamowienia2]);
+                        }
+                        else if (option4 == 2)
+                        {
+                            option4 = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+                       
+
         }
 
         private static int KeyToInt(ConsoleKeyInfo keyInfo)

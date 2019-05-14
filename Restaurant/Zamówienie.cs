@@ -8,19 +8,20 @@ namespace Restaurant
 {
     class Zamówienie
     {
-        public DateTime dataRealizacji = DateTime.Now;
+
         public bool statusZamówienia = false;
         public string identyfikatorZamówienia = Guid.NewGuid().ToString();
-        public List<PozycjaZamówienia> pozycjeZamówienia = new List<PozycjaZamówienia>();
+        public List<PozycjaDanie> pozycjeDań = new List<PozycjaDanie>();
+        public List<Danie> dania = new List<Danie>();
         public bool potwierdzenieElektroniczne = true;
 
 
         public double WartośćZamówienia()
         {
             double wartość = 0;
-            foreach (var pozycjaZamówienia in pozycjeZamówienia)
+            foreach (var pozycja in pozycjeDań)
             {
-                wartość += pozycjaZamówienia.ObliczWartośćPozycji();
+                wartość += pozycja.ObliczWartośćPozycji();
             }
 
             return wartość;
@@ -33,20 +34,28 @@ namespace Restaurant
             return statusZamówienia;
         }
         
-        public bool DodajPozycjeZamówienia(PozycjaZamówienia pozycjaZamówienia)
+        public bool DodajDanieDoZamówienia(Danie danie)
         {
-            if (pozycjeZamówienia.Contains(pozycjaZamówienia))
+
+            if (dania.Contains(danie))
             {
                 return false;
             }
-
-            pozycjeZamówienia.Add(pozycjaZamówienia);
+            dania.Add(danie);
             return true;
         }
 
-        public List<PozycjaZamówienia> WyświetlePozycjeZamówienia(Zamówienie zamówienie)
+        public void UsunDanieZZamówienia(Zamówienie zamówienie, int numerDaniaDoUsuniecia)
         {
-            return pozycjeZamówienia;
+            if (numerDaniaDoUsuniecia != null )
+            {
+                zamówienie.dania[numerDaniaDoUsuniecia] = null;
+            }
+        }
+
+        public List<Danie> WyświetlePozycjeZamówienia(Zamówienie zamówienie)
+        {
+            return zamówienie.dania;
         }
     }
 }

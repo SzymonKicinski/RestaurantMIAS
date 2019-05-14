@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Restaurant
 {
-    class PozycjaZamówienia
+    class PozycjaDanie
     {
         public int numer;
         public string nazwaPozycji;
@@ -14,5 +14,4 @@ namespace Restaurant
         public double ObliczWartośćPozycji() { return ilość * cena; }
     }
 }
-
 

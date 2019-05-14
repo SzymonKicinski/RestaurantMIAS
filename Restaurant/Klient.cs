@@ -6,15 +6,15 @@ namespace Restaurant
 {
     class Klient
     {
-        public DateTime dataRealizacji = DateTime.Now;
         public bool statusZamówienia = false;
         public string identyfikatorZamówienia = Guid.NewGuid().ToString();
-        public List<PozycjaZamówienia> pozycjeZamówienia = new List<PozycjaZamówienia>(); /// Lista dań
+        public List<PozycjaDanie> pozycjaDanie = new List<PozycjaDanie>(); /// Lista pozycjiDań
+        public List<Danie> dania = new List<Danie>();
         public bool potwierdzenieElektroniczne = true;
         public bool rezerwacja = true;
         public bool numerek;
         public Wieszak wieszak;
-        public Zamówienie zamówienie;
+        public Zamówienie zamówienie = new Zamówienie();
 
        
         public bool OpłaćZamówienie(Płatność płatność)
@@ -38,20 +38,11 @@ namespace Restaurant
                  wieszak.ZwróćNumerek();
             }
         }
-        public bool DodajPozycjeZamówienia(PozycjaZamówienia pozycjaZamówienia)
-        {
-            if (pozycjeZamówienia.Contains(pozycjaZamówienia))
-            {
-                return false;
-            }
+        
 
-            pozycjeZamówienia.Add(pozycjaZamówienia);
-            return true;
-        }
-
-        public List<PozycjaZamówienia> WyświetlePozycjeZamówienia(Zamówienie zamówienie)
+        public List<Danie> WyświetlePozycjeZamówienia(Zamówienie zamówienie)
         {
-            return pozycjeZamówienia;
+            return zamówienie.dania;
         }
     }
 }
