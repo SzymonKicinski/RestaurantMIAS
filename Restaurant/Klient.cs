@@ -12,7 +12,7 @@ namespace Restaurant
         public List<Danie> dania = new List<Danie>();
         public bool potwierdzenieElektroniczne = true;
         public bool rezerwacja = true;
-        public bool numerek;
+        public int numerek;
         public Wieszak wieszak;
         public Zamówienie zamówienie = new Zamówienie();
 
@@ -33,7 +33,7 @@ namespace Restaurant
 
         public void WydajNumerekZSzatni()
         {
-            if (numerek)
+            if (numerek == 1 || numerek == 2)
             {
                  wieszak.ZwróćNumerek();
             }

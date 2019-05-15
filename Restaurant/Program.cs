@@ -18,7 +18,7 @@ namespace Restaurant
         };
         // Lista klientów
         static List<Klient> klienci = new List<Klient>();
-
+        static Wieszak wieszak = new Wieszak();
 
         static void Main(string[] args)
         {
@@ -29,7 +29,7 @@ namespace Restaurant
                 Console.Clear();
                 Console.WriteLine("==================================================");
                 Console.WriteLine("1. Nowy klient");
-                Console.WriteLine("2. Dodaj danie do klienta");
+                Console.WriteLine("2. Edycja zamówienia klienta");
                 Console.WriteLine("3. Edytuj klienta");
                 Console.WriteLine("4. Wydrukuj potwierdzenie zapłaty");
 
@@ -47,17 +47,17 @@ namespace Restaurant
                         NowyKlient();
                         break;
                     case 2:
-                       DodajDanieDoKlienta(); 
+                       DodajDanieDoKlienta(); // Done
                         break;
                     case 3:
                         // Zmiana statusu przygotowanego dania przez kucharza - trzeba dodać tylko boola na true i gotowe 
                         //+ console.wrieline #TODO
+                        EdytujKlienta();
                         break;
                     case 4:
+                        Zapłać();
                         // Ogarnięcie płatności. Wybór płatności i zwykły console. #TODO
                         break;
-                        // A i numerek zamiast inta mam bool'a bo dałem bool'a czy ktos potrzebuje czy nie #TODO
-                        // jesli tak to dostaje randomowa liczbe bo i tak nie ma to znaczenia dokladniejszego
                 }
             }
         }
@@ -81,7 +81,7 @@ namespace Restaurant
         private static void NowyKlient()
         {
             Klient klient = new Klient();
-            
+
 
             Console.WriteLine("==================================================");
             Console.WriteLine("Dodawanie nowego klienta");
@@ -105,7 +105,12 @@ namespace Restaurant
             {
                 option3 = KeyToInt(Console.ReadKey());
             }
-            klient.numerek = option3 == 1;
+            if (option3 == 1)
+            {
+                //klient.numerek = option3 == 1;
+                klient.numerek = wieszak.ZwróćNumerek();
+            }
+            
 
             Console.WriteLine("Pokaż menu");
             int counter = 0;
@@ -183,7 +188,7 @@ namespace Restaurant
             {
                 numeryKlientow += i;
                 Console.WriteLine("Numer klienta: " + numeryKlientow);
-                Console.WriteLine("Numerek z szatni: " + klienci[i].numerek);
+                Console.WriteLine("Numerek z szatni: " + klienci[i].wieszak.Numerek);
                 Console.WriteLine("Dania: ");
                 for (int d = 0; counter + d < klienci[i].zamówienie.dania.Count; d++)
                 {
@@ -232,8 +237,8 @@ namespace Restaurant
                 if ( option == 1 )
                 {
                     //    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.UsunDanieZZamówienia(klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie,danieDoEdycji);
-                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.dania[danieDoEdycji].Nazwa = null;
-                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia].zamówienie.dania[danieDoEdycji].Cena = 0;
+                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia-1].zamówienie.dania[danieDoEdycji].Nazwa = null;
+                    klienci[numerKlientaWKtórymDokuonujeEdycjiZamownienia-1].zamówienie.dania[danieDoEdycji].Cena = 0;
                 }
             }
 
@@ -304,9 +309,102 @@ namespace Restaurant
                     }
                 }
             }
-                       
+
 
         }
+
+        private static void EdytujKlienta()
+        {
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Wyswietl listę klientów");
+            Console.WriteLine("==================================================");
+            int counter2 = 0;
+            int numeryKlientow2 = 1;
+            for (int i = 0; counter2 + i < klienci.Count; i++)
+            {
+
+                if (klienci[i].zamówienie.dania[i].Cena > 0)
+                {
+                    numeryKlientow2 += i;
+                    Console.WriteLine("Numer klienta: " + numeryKlientow2);
+                    Console.WriteLine("Numerek z szatni: " + klienci[i].wieszak.Numerek);
+                    Console.WriteLine("Rezerwacja: " + klienci[i].rezerwacja);
+                }
+            }
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Podaj numer klienta do usunięcia");
+            Console.WriteLine("==================================================");
+            int numerKlientaDoUsunięcia;
+            while (!int.TryParse(Console.ReadLine(), out numerKlientaDoUsunięcia))
+            {
+                Console.WriteLine("Nieprawidłowy format liczby");
+            }
+            klienci.RemoveAt(numerKlientaDoUsunięcia-1);
+
+        }
+
+        private static void Zapłać()
+        {
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Wyswietl listę klientów");
+            Console.WriteLine("==================================================");
+            int counter2 = 0;
+            int numeryKlientow2 = 0;
+            for (int i = 0; counter2 + i < klienci.Count; ++i)
+            {
+
+                if (klienci[i].zamówienie.dania[i].Cena > 0)
+                {
+                    numeryKlientow2 += i;
+                    Console.WriteLine("Numer klienta: " + numeryKlientow2);
+                    Console.WriteLine("Numerek z szatni: " + klienci[i].numerek);
+                    Console.WriteLine("Rezerwacja: " + klienci[i].rezerwacja);
+                }
+            }
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Podaj numer klienta do opłacienia");
+            Console.WriteLine("==================================================");
+            int numerKlientaDoOpłacenia;
+            while (!int.TryParse(Console.ReadLine(), out numerKlientaDoOpłacenia))
+            {
+                Console.WriteLine("Nieprawidłowy format liczby");
+            }
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Obliczenie kwoty do zapłaty");
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Do zapłaty: ");
+            int counter = 0;
+            int sumaZamówienia = 0;
+            for (int i = 0; counter< klienci[numerKlientaDoOpłacenia].zamówienie.dania.Count; i++)
+            {
+                if (klienci[numerKlientaDoOpłacenia ].zamówienie.dania[i].Cena >= 0)
+                {
+                    sumaZamówienia += klienci[numerKlientaDoOpłacenia ].zamówienie.dania[i].Cena;
+                }
+            }
+            Console.WriteLine("==================================================");
+            Console.WriteLine("Płatność kartą = 1, gotówką = 2?");
+            Console.WriteLine("==================================================");
+            int formaPłatności;
+            while (!int.TryParse(Console.ReadLine(), out formaPłatności))
+            {
+                Console.WriteLine("Nieprawidłowy format liczby");
+            }
+            while (formaPłatności != 1 && formaPłatności != 2)
+            {
+                if (formaPłatności == 1)
+                {
+                    Karta karta = new Karta();
+                    karta.Zapłać(klienci[numerKlientaDoOpłacenia -1].zamówienie);
+                } else
+                {
+                    Gotówka gotówka = new Gotówka();
+                    gotówka.Zapłać(klienci[numerKlientaDoOpłacenia -1].zamówienie);
+
+                }
+            }
+
+            }
 
         private static int KeyToInt(ConsoleKeyInfo keyInfo)
         {
