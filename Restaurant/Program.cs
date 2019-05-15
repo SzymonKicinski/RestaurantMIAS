@@ -47,14 +47,17 @@ namespace Restaurant
                         NowyKlient();
                         break;
                     case 2:
-                       DodajDanieDoKlienta();
+                       DodajDanieDoKlienta(); 
                         break;
                     case 3:
-                        // EdycjaZamówienia();
+                        // Zmiana statusu przygotowanego dania przez kucharza - trzeba dodać tylko boola na true i gotowe 
+                        //+ console.wrieline #TODO
                         break;
                     case 4:
-                        WyświetlZamówienie();
+                        // Ogarnięcie płatności. Wybór płatności i zwykły console. #TODO
                         break;
+                        // A i numerek zamiast inta mam bool'a bo dałem bool'a czy ktos potrzebuje czy nie #TODO
+                        // jesli tak to dostaje randomowa liczbe bo i tak nie ma to znaczenia dokladniejszego
                 }
             }
         }
@@ -164,18 +167,6 @@ namespace Restaurant
                 
                 
             }
-
-
-            ///  Console.WriteLine("Płatność kartą?");
-            ///  Console.WriteLine("1. Tak");
-            ///Console.WriteLine("2. Nie");
-
-            ///            int option = 0;
-            ///   while (option != 1 && option != 2)
-            /// {
-            ///option = KeyToInt(Console.ReadKey());
-            /// }
-            ///            nowe.potwierdzenieElektroniczne = option == 1;
 
             // zamówienie = nowe;
             klienci.Add(klient);
